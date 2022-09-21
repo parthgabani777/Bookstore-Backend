@@ -2,7 +2,9 @@ import express from "express";
 import dotenv from "dotenv";
 import { dbConnect } from "./db/db.connect.js";
 import cors from "cors";
-import { errorHandlerMiddleware } from "./error.js";
+import { HttpException, errorHandlerMiddleware } from "./error.js";
+import { authRouter } from "./routes/auth.routes.js";
+import { productRouter } from "./routes/product.routes.js";
 
 dotenv.config();
 dbConnect();
@@ -13,11 +15,14 @@ const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
-app.use("/", (req, res) => {
-    res.status(200).send("Hello world");
-});
+// app.use("/", async (req, res) => {
+//     res.send();
+// });
 
-app.use((req, res) => {
+app.use("/auth", authRouter);
+app.use("/products", productRouter);
+
+app.use(() => {
     throw new HttpException(404, "Can't find provided routes");
 });
 

@@ -11,6 +11,7 @@ export class HttpException extends Error {
     }
 }
 
+// eslint-disable-next-line no-unused-vars
 export const errorHandlerMiddleware = (error, req, res, next) => {
     let status = 400;
     let messages = [];

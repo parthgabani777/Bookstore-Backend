@@ -14,6 +14,12 @@ const CartItemSchema = new mongoose.Schema({
     qty: { type: Number },
 });
 
+const WishlistItemSchema = new mongoose.Schema({
+    productId: { type: Schema.Types.ObjectId, ref: "product" },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+});
+
 export const UserSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -27,7 +33,7 @@ export const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         cast: [false, "Email can only be string"],
-        unique: [true, "Email already exist"],
+        unique: [true],
         required: [true, "Email is Required"],
     },
     password: {
@@ -39,7 +45,7 @@ export const UserSchema = new mongoose.Schema({
             message: "Password Format is wrong",
         },
     },
-    wishlist: [{ type: Schema.Types.ObjectId, ref: "product" }],
+    wishlist: [WishlistItemSchema],
     cart: [CartItemSchema],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
@@ -47,6 +53,7 @@ export const UserSchema = new mongoose.Schema({
 
 UserSchema.post("save", (error, doc, next) => {
     if (error.name === "MongoServerError" && error.code === 11000) {
+        console.log(error);
         next(new HttpException(409, "Email already exist"));
     } else {
         next();

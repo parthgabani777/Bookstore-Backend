@@ -16,6 +16,8 @@ export const errorHandlerMiddleware = (error, req, res, next) => {
     let status = 400;
     let messages = [];
 
+    console.log(error);
+
     switch (error.constructor) {
         case mongoose.Error.ValidationError:
             status = 409;

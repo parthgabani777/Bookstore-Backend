@@ -5,6 +5,8 @@ import cors from "cors";
 import { HttpException, errorHandlerMiddleware } from "./error.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { productRouter } from "./routes/product.routes.js";
+import { wishlistRouter } from "./routes/wishlist.routes.js";
+import { RequiresAuth } from "./middleware/RequiresAuth.js";
 
 dotenv.config();
 dbConnect();
@@ -21,6 +23,7 @@ app.use(express.json());
 
 app.use("/auth", authRouter);
 app.use("/products", productRouter);
+app.use("/user/wishlist", RequiresAuth, wishlistRouter);
 
 app.use(() => {
     throw new HttpException(404, "Can't find provided routes");
@@ -29,6 +32,5 @@ app.use(() => {
 app.use(errorHandlerMiddleware);
 
 app.listen(PORT, () => {
-    console.clear();
     console.log(`app listening on port ${PORT}`);
 });

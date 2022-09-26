@@ -9,3 +9,15 @@ export function flattenWishlist(wishlist) {
         return flattenWishlistProduct;
     });
 }
+
+export function flattenCart(cart) {
+    return cart.map((cartProduct) => {
+        const flattenCartProduct = {
+            ...cartProduct,
+            ...cartProduct.productId,
+        };
+
+        delete flattenCartProduct.productId;
+        return flattenCartProduct;
+    });
+}

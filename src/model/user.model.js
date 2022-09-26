@@ -8,10 +8,13 @@ const passwordFormatValidator = async function (password) {
 };
 
 const CartItemSchema = new mongoose.Schema({
-    productId: { type: Schema.Types.ObjectId, ref: "product" },
+    productId: {
+        type: Schema.Types.ObjectId,
+        ref: "product",
+    },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-    qty: { type: Number },
+    qty: { type: Number, min: [1, "can't decrease quantity further"] },
 });
 
 const WishlistItemSchema = new mongoose.Schema({

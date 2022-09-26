@@ -6,6 +6,7 @@ import { HttpException, errorHandlerMiddleware } from "./error.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { productRouter } from "./routes/product.routes.js";
 import { wishlistRouter } from "./routes/wishlist.routes.js";
+import { cartRouter } from "./routes/cart.routes.js";
 import { RequiresAuth } from "./middleware/RequiresAuth.js";
 
 dotenv.config();
@@ -17,13 +18,10 @@ const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
-// app.use("/", async (req, res) => {
-//     res.send();
-// });
-
 app.use("/auth", authRouter);
 app.use("/products", productRouter);
 app.use("/user/wishlist", RequiresAuth, wishlistRouter);
+app.use("/user/cart", RequiresAuth, cartRouter);
 
 app.use(() => {
     throw new HttpException(404, "Can't find provided routes");

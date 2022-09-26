@@ -59,24 +59,27 @@ export async function removeProductFormCart(userId, productId) {
 }
 
 export async function changeQuantityOfCart(userId, productId, actionType) {
-    let incrementor = actionType === "increment" ? 1 : -1;
+    const incrementor = actionType === "increment" ? 1 : -1;
 
-    const user = await UserModel.findOne({
+    const findQuery = {
         _id: userId,
         "cart.productId": { $in: productId },
-    });
+        cart: {
+            $elemMatch: { qty: { $gt: incrementor === -1 ? 1 : 0 } },
+        },
+    };
+
+    const user = await UserModel.findOneAndUpdate(
+        findQuery,
+        { $inc: { "cart.$.qty": incrementor } },
+        { returnDocument: "after" }
+    )
+        .populate("cart.productId")
+        .lean();
 
     if (!user) {
         throw new HttpException(400, "Provided product is not present in cart");
     }
 
-    const userProduct = user.cart.filter((cartProduct) => {
-        return cartProduct.productId.toString() === productId;
-    })[0];
-    userProduct.qty += incrementor;
-
-    await user.save();
-    await user.populate("cart.productId");
-    const updatedUser = user.toObject();
-    return updatedUser.cart;
+    return user.cart;
 }
